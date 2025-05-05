@@ -1,19 +1,3 @@
-// chrome.tabs.onUpdated.addListener((tabId, tab) => {
-//   //on open new tab - not on refresh
-//   // view in  chrome://extensions/ -> service worker
-//   if (tab.url && tab.url.includes("youtube.com/watch")) {
-//     const queryParameters = tab.url.split("?")[1];
-//     const urlParameters = new URLSearchParams(queryParameters);
-
-//     chrome.tabs.sendMessage(tabId, {
-//       type: "NEW",
-//       videoId: urlParameters.get("v"), //get the unieq YT video identefier
-//     });
-//   }
-// });
-
-//To handle reloads where the tab is undefined, reach out and get it
-
 const socialMediaDomains = [
   "youtube.com",
   "instagram.com",
@@ -31,19 +15,20 @@ const socialMediaDomains = [
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status !== "complete") return; // Wait for page to finish loading
 
-  const processTab = (tabInfo) => {
-    const url = tabInfo.url;
+  const url = tab?.url;
+  console.log("Tab URL:", url);
 
-    if (url && socialMediaDomains.some((domain) => url.includes(domain))) {
-      chrome.tabs.sendMessage(tabId, {
+  const domain = socialMediaDomains.find((d) => url.includes(d));
+
+  if (url && domain) {
+    console.log("Sending MAIN message to content script");
+    chrome.tabs
+      .sendMessage(tabId, {
         type: "MAIN",
+        domain,
+      })
+      .catch((err) => {
+        console.log("Error sending message:", err);
       });
-    }
-
-    if (tab && tab.url) {
-      processTab(tab);
-    } else {
-      chrome.tabs.get(tabId, processTab);
-    }
-  };
+  }
 });
