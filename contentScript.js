@@ -11,7 +11,7 @@
         setTimeout(() => removeYTShortsElements(), 2000);
         break;
       case "facebook.com":
-        setTimeout(() => removeFBShorts(), 2000);
+        setTimeout(() => removeFBShorts(), 1);
     }
   });
 
