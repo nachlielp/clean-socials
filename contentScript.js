@@ -1,19 +1,16 @@
 (() => {
   chrome.runtime.onMessage.addListener((obj, sender, response) => {
-    const { type, value, videoId } = obj;
+    const { type, domain } = obj;
 
-    if (type === "MAIN") {
-      setTimeout(() => removeShortsElements(), 2000);
+    if (domain === "youtube.com") {
+      setTimeout(() => removeYTShortsElements(), 2000);
     }
   });
 
-  function removeShortsElements() {
-    console.log("removeShortsElements");
-    //Test remove shorts button
+  function removeYTShortsElements() {
     const shortsLink = document.querySelector('a#endpoint[title="Shorts"]');
 
     if (shortsLink) {
-      console.log("Removing Shorts Btn");
       shortsLink.style.display = "none";
     }
 

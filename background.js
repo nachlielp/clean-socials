@@ -18,11 +18,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   const url = tab?.url;
   console.log("Tab URL:", url);
 
-  if (url && socialMediaDomains.some((domain) => url.includes(domain))) {
+  const domain = socialMediaDomains.find((d) => url.includes(d));
+
+  if (url && domain) {
     console.log("Sending MAIN message to content script");
     chrome.tabs
       .sendMessage(tabId, {
         type: "MAIN",
+        domain,
       })
       .catch((err) => {
         console.log("Error sending message:", err);
