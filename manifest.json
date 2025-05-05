@@ -15,7 +15,19 @@
     ],
     "web_accessible_resources": [
       {
-        "matches": ["https://*.youtube.com/*", "https://*.instagram.com/*", "https://*.facebook.com/*", "https://*.twitter.com/*", "https://*.linkedin.com/*", "https://*.tiktok.com/*", "https://*.pinterest.com/*", "https://*.reddit.com/*", "https://*.snapchat.com/*", "https://*.twitch.tv/*", "https://*.youtube.com/*"]
+        "resources": ["contentScript.js"],
+        "matches": [
+          "https://*.youtube.com/*",
+          "https://*.instagram.com/*",
+          "https://*.facebook.com/*",
+          "https://*.twitter.com/*",
+          "https://*.linkedin.com/*",
+          "https://*.tiktok.com/*",
+          "https://*.pinterest.com/*",
+          "https://*.reddit.com/*",
+          "https://*.snapchat.com/*",
+          "https://*.twitch.tv/*"
+        ]
       }
     ],
     "action": {

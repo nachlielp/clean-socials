@@ -25,23 +25,23 @@
   }
 
   function handleNewElements(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-        mutation.addedNodes.forEach((node) => {
-          console.log("Node: ", node);
-          // Example: Check if the node is a video or comment element
-          if (node.nodeType === 1) {
-            // Element node
-            // Replace with your selector or logic
-            if (node.matches && node.matches(".your-target-selector")) {
-              // Handle the new element
-              console.log("New element detected:", node);
-              node.style.display = "none";
-            }
-          }
-        });
-      }
-    }
+    // for (const mutation of mutationsList) {
+    //   if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+    //     mutation.addedNodes.forEach((node) => {
+    //       console.log("Node: ", node);
+    //       // Example: Check if the node is a video or comment element
+    //       if (node.nodeType === 1) {
+    //         // Element node
+    //         // Replace with your selector or logic
+    //         if (node.matches && node.matches(".your-target-selector")) {
+    //           // Handle the new element
+    //           console.log("New element detected:", node);
+    //           node.style.display = "none";
+    //         }
+    //       }
+    //     });
+    //   }
+    // }
   }
 
   const observer = new MutationObserver(handleNewElements);
