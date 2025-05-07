@@ -24,8 +24,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     console.log("Sending MAIN message to content script");
     chrome.tabs
       .sendMessage(tabId, {
-        type: "MAIN",
         domain,
+        url,
       })
       .catch((err) => {
         console.log("Error sending message:", err);

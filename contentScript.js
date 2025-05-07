@@ -1,30 +1,89 @@
 (() => {
-  // const activeTab = getActiveTabURL();
+  let shortsIntervalId = null;
+  let observer = null;
 
-  chrome.runtime.onMessage.addListener((obj, sender, response) => {
-    const { type, domain } = obj;
-    if (domain === "youtube.com") {
-      setTimeout(() => removeYTShortsElements(), 2000);
+  function cleanup() {
+    if (shortsIntervalId) {
+      clearInterval(shortsIntervalId);
+      shortsIntervalId = null;
     }
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+  }
+
+  function initializeObserver() {
+    observer = new MutationObserver(handleNewElements);
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  chrome.runtime.onMessage.addListener((obj, sender) => {
+    const { domain, url } = obj;
+
+    // Clean up previous page's resources
+    cleanup();
+
     switch (domain) {
       case "youtube.com":
-        setTimeout(() => removeYTShortsElements(), 2000);
+        const mainPage = "https://www." + domain + "/";
+        if (mainPage === url) {
+          shortsIntervalId = setInterval(() => removeYTShortsElements(), 1000);
+        } else {
+          setTimeout(() => removeYTShortsElements(), 1000);
+        }
         break;
       case "facebook.com":
         setTimeout(() => removeFBShorts(), 1);
     }
+
+    // Initialize observer for the new page
+    initializeObserver();
   });
 
   function removeYTShortsElements() {
-    const shortsLink = document.querySelector('a#endpoint[title="Shorts"]');
-
-    if (shortsLink) {
-      shortsLink.style.display = "none";
+    const shortsLinks = document.querySelectorAll('a#endpoint[title="Shorts"]');
+    if (shortsLinks.length) {
+      for (let shortsLink of shortsLinks) shortsLink.style.display = "none";
     }
 
-    const shortsContiner = document.querySelector("ytd-rich-section-renderer");
-    if (shortsContiner) {
-      shortsContiner.style.display = "none";
+    const shortsContiners = document.querySelectorAll(
+      "ytd-rich-section-renderer"
+    );
+    if (shortsContiners.length) {
+      for (let shortsContiner of shortsContiners)
+        shortsContiner.style.display = "none";
+    }
+
+    const shortsTitle = Array.from(
+      document.querySelectorAll(
+        "span#title.style-scope.ytd-rich-shelf-renderer"
+      )
+    ).find((el) => el.textContent.trim() === "Shorts");
+
+    if (shortsTitle) {
+      if (shortsTitle.style.display !== "none") {
+        shortsTitle.style.display = "none";
+        console.log("REMOVING");
+        let parent = shortsTitle;
+        while (parent && parent.tagName !== "ytd-rich-section-renderer") {
+          parent = parent.parentElement;
+        }
+        if (parent) {
+          parent.style.display = "none";
+        }
+      }
+    }
+  }
+
+  function scanYTMutationList(mutationsList) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        mutation.addedNodes.forEach((node) => {
+          if (node && node.nodeType === 1) {
+          }
+        });
+      }
     }
   }
 
@@ -116,11 +175,10 @@
       case "facebook.com":
         scanFacebookMutationsList(mutationsList);
         break;
+      case "youtube.com":
+        scanYTMutationList(mutationsList);
     }
   }
-
-  const observer = new MutationObserver(handleNewElements);
-  observer.observe(document.body, { childList: true, subtree: true });
 })();
 
 const getTime = (t) => {
