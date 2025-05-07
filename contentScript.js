@@ -176,7 +176,7 @@
         scanFacebookMutationsList(mutationsList);
         break;
       case "youtube.com":
-        scanYTMutationList(mutationsList);
+      // scanYTMutationList(mutationsList);
     }
   }
 })();
