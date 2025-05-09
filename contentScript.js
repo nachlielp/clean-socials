@@ -26,9 +26,10 @@
 
     switch (domain) {
       case "youtube.com":
-        const mainPage = "https://www." + domain + "/";
-        if (mainPage === url) {
+        if (url === "https://www.youtube.com/") {
           shortsIntervalId = setInterval(() => removeYTShortsElements(), 1000);
+        } else if (url.startsWith("https://www.youtube.com/watch")) {
+          setTimeout(() => removeSalesElements(), 1000);
         } else {
           setTimeout(() => removeYTShortsElements(), 1000);
         }
@@ -76,13 +77,11 @@
     }
   }
 
-  function scanYTMutationList(mutationsList) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-        mutation.addedNodes.forEach((node) => {
-          if (node && node.nodeType === 1) {
-          }
-        });
+  function removeSalesElements() {
+    const merchShelves = document.querySelectorAll("ytd-merch-shelf-renderer");
+    if (merchShelves.length) {
+      for (let merchShelf of merchShelves) {
+        merchShelf.style.display = "none";
       }
     }
   }
@@ -175,7 +174,7 @@
       case "facebook.com":
         scanFacebookMutationsList(mutationsList);
         break;
-      case "youtube.com":
+      // case "youtube.com":
       // scanYTMutationList(mutationsList);
     }
   }
