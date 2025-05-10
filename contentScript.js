@@ -30,6 +30,7 @@
           shortsIntervalId = setInterval(() => removeYTShortsElements(), 1000);
         } else if (url.startsWith("https://www.youtube.com/watch")) {
           setTimeout(() => removeSalesElements(), 1000);
+          setTimeout(() => removeYTShortsElements(), 1000);
         } else {
           setTimeout(() => removeYTShortsElements(), 1000);
         }
@@ -49,7 +50,7 @@
     }
 
     const shortsContiners = document.querySelectorAll(
-      "ytd-rich-section-renderer"
+      "ytd-rich-section-renderer, ytd-reel-shelf-renderer"
     );
     if (shortsContiners.length) {
       for (let shortsContiner of shortsContiners)
