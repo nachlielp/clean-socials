@@ -1,12 +1,7 @@
 (() => {
-  let shortsIntervalId = null;
   let observer = null;
 
   function cleanup() {
-    if (shortsIntervalId) {
-      clearInterval(shortsIntervalId);
-      shortsIntervalId = null;
-    }
     if (observer) {
       observer.disconnect();
       observer = null;
@@ -23,21 +18,6 @@
 
     // Clean up previous page's resources
     cleanup();
-
-    switch (domain) {
-      case "youtube.com":
-        if (url === "https://www.youtube.com/") {
-          shortsIntervalId = setInterval(() => removeYTShortsElements(), 1000);
-        } else if (url.startsWith("https://www.youtube.com/watch")) {
-          setTimeout(() => removeSalesElements(), 1000);
-          setTimeout(() => removeYTShortsElements(), 1000);
-        } else {
-          setTimeout(() => removeYTShortsElements(), 1000);
-        }
-        break;
-      case "facebook.com":
-        setTimeout(() => removeFBShorts(), 1);
-    }
 
     // Initialize observer for the new page
     initializeObserver();
@@ -66,7 +46,6 @@
     if (shortsTitle) {
       if (shortsTitle.style.display !== "none") {
         shortsTitle.style.display = "none";
-        console.log("REMOVING");
         let parent = shortsTitle;
         while (parent && parent.tagName !== "ytd-rich-section-renderer") {
           parent = parent.parentElement;
@@ -114,7 +93,6 @@
     if (complementarySection) {
       complementarySection.style.display = "none";
     }
-    //<div data-pagelet="FeedUnit_{n}">
 
     const h3 = Array.from(document.querySelectorAll("h3")).find(
       (el) => el.textContent.trim() === "Reels and short videos"
@@ -141,12 +119,16 @@
     }
   }
 
-  function findAndHideReelsAndShortsParentContainer(feedItemEl) {
-    const h3 = Array.from(feedItemEl.querySelectorAll("h3")).find(
-      (el) => el.textContent.trim() === "Reels and short videos"
-    );
-    if (h3) {
-      feedItemEl.style.display = "none";
+  function scanYoutubeMutationsList(mutationsList) {
+    const url = window.location.href;
+
+    for (const mutation of mutationsList) {
+      if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+        removeYTShortsElements();
+        if (url.startsWith("https://www.youtube.com/watch")) {
+          removeSalesElements();
+        }
+      }
     }
   }
 
@@ -164,7 +146,17 @@
             }
           }
         });
+        removeFBShorts();
       }
+    }
+  }
+
+  function findAndHideReelsAndShortsParentContainer(feedItemEl) {
+    const h3 = Array.from(feedItemEl.querySelectorAll("h3")).find(
+      (el) => el.textContent.trim() === "Reels and short videos"
+    );
+    if (h3) {
+      feedItemEl.style.display = "none";
     }
   }
 
@@ -175,8 +167,9 @@
       case "facebook.com":
         scanFacebookMutationsList(mutationsList);
         break;
-      // case "youtube.com":
-      // scanYTMutationList(mutationsList);
+      case "youtube.com":
+        scanYoutubeMutationsList(mutationsList);
+        break;
     }
   }
 })();
