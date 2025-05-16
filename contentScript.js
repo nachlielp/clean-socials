@@ -1,12 +1,7 @@
 (() => {
-  let shortsIntervalId = null;
   let observer = null;
 
   function cleanup() {
-    if (shortsIntervalId) {
-      clearInterval(shortsIntervalId);
-      shortsIntervalId = null;
-    }
     if (observer) {
       observer.disconnect();
       observer = null;
@@ -24,19 +19,17 @@
     // Clean up previous page's resources
     cleanup();
 
+    // Perform initial cleanup for elements already present on load/navigation
     switch (domain) {
       case "youtube.com":
-        if (url === "https://www.youtube.com/") {
-          shortsIntervalId = setInterval(() => removeYTShortsElements(), 1000);
-        } else if (url.startsWith("https://www.youtube.com/watch")) {
-          setTimeout(() => removeSalesElements(), 1000);
-          setTimeout(() => removeYTShortsElements(), 1000);
-        } else {
-          setTimeout(() => removeYTShortsElements(), 1000);
+        removeYTShortsElements();
+        if (url.startsWith("https://www.youtube.com/watch")) {
+          removeSalesElements();
         }
         break;
       case "facebook.com":
-        setTimeout(() => removeFBShorts(), 1);
+        removeFBShorts();
+        break;
     }
 
     // Initialize observer for the new page
@@ -114,7 +107,6 @@
     if (complementarySection) {
       complementarySection.style.display = "none";
     }
-    //<div data-pagelet="FeedUnit_{n}">
 
     const h3 = Array.from(document.querySelectorAll("h3")).find(
       (el) => el.textContent.trim() === "Reels and short videos"
@@ -170,13 +162,19 @@
 
   function handleNewElements(mutationsList, observer) {
     let domain = window.location.hostname.replace(/^www\./, "");
+    let currentUrl = window.location.href; // Get current URL for context
 
     switch (domain) {
+      case "youtube.com":
+        removeYTShortsElements();
+        if (currentUrl.startsWith("https://www.youtube.com/watch")) {
+          removeSalesElements();
+        }
+        break;
       case "facebook.com":
         scanFacebookMutationsList(mutationsList);
+        removeFBShorts(); // Add this for general FB element cleanup
         break;
-      // case "youtube.com":
-      // scanYTMutationList(mutationsList);
     }
   }
 })();
