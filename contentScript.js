@@ -119,6 +119,24 @@
     }
   }
 
+  function hideReelsAndShortsParentContainer(feedItemEl) {
+    const h3 = Array.from(feedItemEl.querySelectorAll("h3")).find(
+      (el) => el.textContent.trim() === "Reels and short videos"
+    );
+    if (h3) {
+      feedItemEl.style.display = "none";
+    }
+  }
+
+  function hideFBSponsoredParentContainer(feedItemEl) {
+    const span = Array.from(feedItemEl.querySelectorAll("span")).find(
+      (el) => el.textContent.trim() === "Sponsored"
+    );
+    if (span) {
+      feedItemEl.style.display = "none";
+    }
+  }
+
   function scanYoutubeMutationsList(mutationsList) {
     const url = window.location.href;
 
@@ -142,21 +160,13 @@
               node.hasAttribute("data-pagelet") &&
               node.getAttribute("data-pagelet").startsWith("FeedUnit_")
             ) {
-              findAndHideReelsAndShortsParentContainer(node);
+              hideReelsAndShortsParentContainer(node);
+              hideFBSponsoredParentContainer(node);
             }
           }
         });
         removeFBShorts();
       }
-    }
-  }
-
-  function findAndHideReelsAndShortsParentContainer(feedItemEl) {
-    const h3 = Array.from(feedItemEl.querySelectorAll("h3")).find(
-      (el) => el.textContent.trim() === "Reels and short videos"
-    );
-    if (h3) {
-      feedItemEl.style.display = "none";
     }
   }
 
