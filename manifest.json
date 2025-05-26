@@ -2,6 +2,7 @@
     "name": "Clean Socials",
     "version": "0.1.0",
     "description": "Clean Socials",
+  
       "permissions": ["storage", "tabs"],
     "host_permissions": ["https://*.youtube.com/*", "https://*.instagram.com/*", "https://*.facebook.com/*", "https://*.twitter.com/*", "https://*.linkedin.com/*", "https://*.tiktok.com/*", "https://*.pinterest.com/*", "https://*.reddit.com/*", "https://*.snapchat.com/*", "https://*.twitch.tv/*", "https://*.youtube.com/*"],
     "background": {
@@ -10,12 +11,13 @@
     "content_scripts": [
       {
         "matches": ["https://*.youtube.com/*", "https://*.instagram.com/*", "https://*.facebook.com/*", "https://*.twitter.com/*", "https://*.linkedin.com/*", "https://*.tiktok.com/*", "https://*.pinterest.com/*", "https://*.reddit.com/*", "https://*.snapchat.com/*", "https://*.twitch.tv/*", "https://*.youtube.com/*"],
-        "js": ["contentScript.js"]
+        "js": ["contentScript.js"],
+        "type": "module"
       }
     ],
     "web_accessible_resources": [
       {
-        "resources": ["contentScript.js"],
+        "resources": ["contentScript.js", "facebook.js", "youtube.js"],
         "matches": [
           "https://*.youtube.com/*",
           "https://*.instagram.com/*",
